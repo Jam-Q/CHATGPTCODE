@@ -1,0 +1,74 @@
+import openai
+import random
+import threading
+
+# Set up the OpenAI API key
+openai.api_key = "your_api_key_here"
+
+def generate_text(prompt, max_tokens, temperature, key):
+    """
+    Generates text using the OpenAI Davinci X language model
+    """
+    response = openai.Completion.create(
+        engine="text-davinci-x",
+        prompt=prompt,
+        max_tokens=max_tokens,
+        n=1,
+        stop=None,
+        temperature=temperature,
+        presence_penalty=key,
+    )
+
+    # Extract the generated text from the API response
+    generated_text = response["choices"][0]["text"].strip()
+
+    return generated_text
+
+def handle_user_input(prompt):
+    """
+    Prompts the user for input and returns the max_tokens, temperature, and key
+    """
+    if prompt is None:
+        prompt = generate_text("Generate a random prompt:", 50, 0.5, random.uniform(-1, 1))
+
+    max_tokens = int(input("Enter the maximum number of tokens: "))
+    temperature = float(input("Enter the temperature (0.0 to 1.0): "))
+    key = random.uniform(-1, 1)
+
+    return max_tokens, temperature, key
+
+def davinci_x_thread(prompt):
+    """
+    Thread that generates text using the OpenAI Davinci X language model
+    """
+    while True:
+        max_tokens, temperature, key = handle_user_input(prompt)
+        text = generate_text(prompt, max_tokens, temperature, key)
+        print(f"Davinci X: {text}")
+
+def davinci_xx_thread(prompt):
+    """
+    Thread that generates text using the OpenAI Davinci XX language model
+    """
+    while True:
+        max_tokens, temperature, key = handle_user_input(prompt)
+        text = generate_text(prompt, max_tokens, temperature, key)
+        print(f"Davinci XX: {text}")
+
+def jimmy_thread(prompt):
+    """
+    Thread that prompts Jimmy for input
+    """
+    while True:
+        text = input("Jimmy: ")
+        prompt = f"Jimmy: {text}"
+
+# Start the threads
+davinci_x_thread_thread = threading.Thread(target=davinci_x_thread, args=(None,))
+davinci_x_thread_thread.start()
+
+davinci_xx_thread_thread = threading.Thread(target=davinci_xx_thread, args=(None,))
+davinci_xx_thread_thread.start()
+
+jimmy_thread_thread = threading.Thread(target=jimmy_thread, args=(None,))
+jimmy_thread_thread.start()
